@@ -1,0 +1,124 @@
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@600&display=swap");
+body {
+  margin: 0;
+  background: hsl(0, 67%, 4%);
+  overflow: hidden;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+/* FIREWORK */
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+#countdown {
+  position: fixed;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  font-size: 120px;
+  font-weight: bold;
+  color: gold;
+  z-index: 10;
+  text-shadow:
+    0 0 20px gold,
+    0 0 40px orange,
+    0 0 80px gold;
+  animation: glow 1s infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow:
+      0 0 20px gold,
+      0 0 40px orange;
+  }
+  to {
+    text-shadow:
+      0 0 40px gold,
+      0 0 80px orange,
+      0 0 120px gold;
+  }
+}
+
+/* ẢNH BẠN */
+.photo,
+#textContainer,
+canvas {
+  display: none;
+}
+.photo {
+  position: fixed;
+  bottom: -200px;
+  z-index: 3;
+  animation: photoUp 6s linear infinite;
+}
+
+.photo img {
+  width: 140px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px gold;
+}
+
+.p1 {
+  left: 10%;
+  animation-delay: 0s;
+}
+.p2 {
+  left: 35%;
+  animation-delay: 2s;
+}
+.p3 {
+  left: 60%;
+  animation-delay: 4s;
+}
+
+/* HOA */
+.hoa {
+  position: fixed;
+  bottom: 0;
+  width: 140px;
+  z-index: 2;
+}
+
+.dao {
+  left: 0;
+}
+.mai {
+  right: 0;
+}
+
+/* ANIMATION */
+.text {
+  position: fixed;
+  bottom: -50px;
+  font-size: 28px;
+  color: gold;
+  white-space: nowrap;
+  animation: textFly 7s linear forwards;
+  text-shadow: 0 0 15px gold;
+}
+
+@keyframes textFly {
+  from {
+    transform: translateY(100vh);
+  }
+  to {
+    transform: translateY(-120vh);
+  }
+}
+
+@keyframes photoUp {
+  from {
+    bottom: -200px;
+    opacity: 0;
+  }
+  to {
+    bottom: 500px;
+    opacity: 1;
+  }
+}
