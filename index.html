@@ -1,37 +1,272 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <title>Happy New Year</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>Chúc Mừng Năm Mới 2026</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+
+      /* ===== NỀN XUÂN ===== */
+      #springBg {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background: linear-gradient(120deg, #ff4e50, #ff9966, #ffcc33);
+        background-size: 400% 400%;
+        animation: bgMove 12s ease infinite;
+      }
+      @keyframes bgMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* ===== COUNTDOWN ===== */
+      #countdown {
+        position: absolute;
+        top: 40%;
+        width: 100%;
+        text-align: center;
+        font-size: 120px;
+        font-weight: bold;
+        z-index: 10;
+        color: yellow;
+        text-shadow:
+          0 0 20px red,
+          0 0 40px orange;
+      }
+
+      /* ===== CANVAS ===== */
+      canvas {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: none;
+      }
+
+      /* ===== TEXT ===== */
+      #textContainer {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        display: none;
+      }
+      .text {
+        position: absolute;
+        bottom: -50px;
+        font-size: 48px;
+        animation: fly 8s linear forwards;
+        white-space: nowrap;
+      }
+      @keyframes fly {
+        to {
+          transform: translateY(-120vh);
+          opacity: 0;
+        }
+      }
+
+      /* ===== PHOTO ===== */
+      .photo {
+        position: absolute;
+        bottom: -200px;
+        width: 130px;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+        animation: photoFly linear infinite;
+        z-index: 3;
+      }
+      @keyframes photoFly {
+        to {
+          transform: translateY(-130vh);
+        }
+      }
+    </style>
   </head>
+
   <body>
-    <!-- ÂM THANH -->
-    <audio id="tickSound">
-      <source src="music/tt.mp3" type="audio/mpeg" />
-    </audio>
+    <div id="springBg"></div>
 
-    <audio id="bgMusic" loop>
-      <source src="music/mnm.mp3" type="audio/mpeg" />
-    </audio>
-
-    <canvas id="fireworks"></canvas>
-
-    <!-- COUNTDOWN -->
     <div id="countdown">10</div>
-
-    <!-- CHỮ CHÚC MỪNG -->
+    <canvas id="fireworks"></canvas>
     <div id="textContainer"></div>
 
-    <!-- ẢNH BẠN BÈ -->
-    <div class="photo p1"><img src="img/ln11.jpg" /></div>
-    <div class="photo p2"><img src="img/ln12.jpg" /></div>
-    <div class="photo p3"><img src="img/ln13.jpg" /></div>
-    <div class="photo p4"><img src="img.jpg" /></div>
-    <!-- HOA -->
-    <!-- <img src="dao.png" class="hoa dao" /> -->
-    <!-- <img src="mai.png" class="hoa mai" /> -->
+    <audio id="tickSound" src="music/tt.mp3" preload="auto"></audio>
+    <audio id="bgMusic" src="music/mnm.mp3" preload="auto" loop></audio>
 
-    <script src="script.js"></script>
+    <script>
+      /* ===== DANH SÁCH ẢNH ===== */
+      const images = [
+        "img/ln12.jpg",
+        "img/ln13.jpg",
+        "img/ln14.jpg",
+        "img/ln15.jpg",
+        "img/ln28.png",
+        "img/ln17.jpg",
+        "img/ln18.jpg",
+        "img/ln19.jpg",
+        "img/ln20.jpg",
+        "img/ln21.jpg",
+        "img/ln27.png",
+        "img/ln30.jpg",
+        "img/ln31.jpg",
+      ];
+
+      /* ===== ELEMENT ===== */
+      const countdownEl = document.getElementById("countdown");
+      const textContainer = document.getElementById("textContainer");
+      const tickSound = document.getElementById("tickSound");
+      const music = document.getElementById("bgMusic");
+      const canvas = document.getElementById("fireworks");
+      const ctx = canvas.getContext("2d");
+
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+
+      let time = 10;
+
+      /* ===== MỞ KHÓA AUDIO ===== */
+      document.body.addEventListener(
+        "click",
+        () => {
+          tickSound.play().then(() => {
+            tickSound.pause();
+            tickSound.currentTime = 0;
+          });
+          music.play().then(() => {
+            music.pause();
+            music.currentTime = 0;
+          });
+        },
+        { once: true },
+      );
+
+      /* ===== COUNTDOWN ===== */
+      startCountdown();
+
+      function startCountdown() {
+        countdownEl.textContent = time;
+
+        const timer = setInterval(() => {
+          tickSound.currentTime = 0;
+          tickSound.play();
+
+          countdownEl.textContent = time;
+          time--;
+
+          if (time < 0) {
+            clearInterval(timer);
+            countdownEl.style.display = "none";
+            music.play();
+            startShow();
+          }
+        }, 1000);
+      }
+
+      /* ===== SHOW ===== */
+      function startShow() {
+        canvas.style.display = "block";
+        textContainer.style.display = "block";
+
+        createPhotos();
+        createTexts();
+        startFireworks();
+      }
+
+      /* ===== ẢNH KHÔNG TRÙNG ===== */
+      function createPhotos() {
+        const columns = images.length;
+        const gap = 100 / columns;
+
+        images.forEach((src, i) => {
+          const img = document.createElement("img");
+          img.src = src;
+          img.className = "photo";
+          img.style.left = i * gap + gap / 4 + "%";
+
+          const duration = 8 + Math.random() * 5;
+          img.style.animationDuration = duration + "s";
+
+          document.body.appendChild(img);
+        });
+      }
+
+      /* ===== CHỮ RẤT ÍT ===== */
+      /* ===== CHỮ RẤT ÍT ===== */
+      function createTexts() {
+        const messages = ["🎉 Chúc Mừng Năm Mới 2026 🎉", "❤️ Lộc Ninh 11 ❤️"];
+
+        setInterval(() => {
+          if (textContainer.children.length > 2) return;
+
+          const d = document.createElement("div");
+          d.className = "text";
+
+          // chọn câu ngẫu nhiên
+          d.textContent = messages[Math.floor(Math.random() * messages.length)];
+
+          d.style.left = Math.random() * 70 + "%";
+          d.style.fontFamily =
+            Math.random() > 0.5 ? "Pacifico" : "Dancing Script";
+
+          textContainer.appendChild(d);
+          setTimeout(() => d.remove(), 8000);
+        }, 5000);
+      }
+
+      /* ===== PHÁO HOA ===== */
+      let particles = [];
+
+      function startFireworks() {
+        setInterval(() => {
+          let x = Math.random() * canvas.width;
+          let y = (Math.random() * canvas.height) / 2;
+
+          for (let i = 0; i < 60; i++) {
+            particles.push({
+              x,
+              y,
+              dx: Math.random() * 6 - 3,
+              dy: Math.random() * 6 - 3,
+              life: 100,
+            });
+          }
+        }, 500);
+        animate();
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+          p.x += p.dx;
+          p.y += p.dy;
+          p.life--;
+
+          ctx.fillStyle = `hsl(${Math.random() * 360},100%,60%)`;
+          ctx.fillRect(p.x, p.y, 3, 3);
+
+          if (p.life <= 0) particles.splice(i, 1);
+        });
+        requestAnimationFrame(animate);
+      }
+    </script>
   </body>
 </html>
