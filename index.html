@@ -2,6 +2,7 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chúc Mừng Năm Mới 2026</title>
 
     <link
@@ -25,7 +26,7 @@
         z-index: 0;
         background: linear-gradient(120deg, #ff4e50, #ff9966, #ffcc33);
         background-size: 400% 400%;
-        animation: bgMove 12s ease infinite;
+        animation: bgMove 10s ease infinite;
       }
       @keyframes bgMove {
         0% {
@@ -42,16 +43,33 @@
       /* ===== COUNTDOWN ===== */
       #countdown {
         position: absolute;
-        top: 40%;
+        top: 35%;
         width: 100%;
         text-align: center;
-        font-size: 120px;
+        font-size: 20vw;
         font-weight: bold;
         z-index: 10;
         color: yellow;
         text-shadow:
           0 0 20px red,
           0 0 40px orange;
+      }
+
+      /* ===== NHẤN ĐỂ XEM ===== */
+      #tapHint {
+        position: absolute;
+        top: 65%;
+        width: 100%;
+        text-align: center;
+        font-size: 6vw;
+        color: white;
+        z-index: 10;
+        animation: blink 1s infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0.3;
+        }
       }
 
       /* ===== CANVAS ===== */
@@ -73,7 +91,7 @@
       .text {
         position: absolute;
         bottom: -50px;
-        font-size: 48px;
+        font-size: 7vw;
         animation: fly 8s linear forwards;
         white-space: nowrap;
       }
@@ -88,7 +106,7 @@
       .photo {
         position: absolute;
         bottom: -200px;
-        width: 130px;
+        width: 22vw;
         border-radius: 12px;
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
         animation: photoFly linear infinite;
@@ -106,6 +124,8 @@
     <div id="springBg"></div>
 
     <div id="countdown">10</div>
+    <div id="tapHint">👉 Nhấn vào màn hình để xem</div>
+
     <canvas id="fireworks"></canvas>
     <div id="textContainer"></div>
 
@@ -132,6 +152,7 @@
 
       /* ===== ELEMENT ===== */
       const countdownEl = document.getElementById("countdown");
+      const tapHint = document.getElementById("tapHint");
       const textContainer = document.getElementById("textContainer");
       const tickSound = document.getElementById("tickSound");
       const music = document.getElementById("bgMusic");
@@ -175,6 +196,7 @@
           if (time < 0) {
             clearInterval(timer);
             countdownEl.style.display = "none";
+            tapHint.style.display = "none";
             music.play();
             startShow();
           }
@@ -185,7 +207,6 @@
       function startShow() {
         canvas.style.display = "block";
         textContainer.style.display = "block";
-
         createPhotos();
         createTexts();
         startFireworks();
@@ -209,27 +230,21 @@
         });
       }
 
-      /* ===== CHỮ RẤT ÍT ===== */
-      /* ===== CHỮ RẤT ÍT ===== */
+      /* ===== CHỮ ===== */
       function createTexts() {
-        const messages = ["🎉 Chúc Mừng Năm Mới 2026 🎉", "❤️ Lộc Ninh 11 ❤️"];
-
         setInterval(() => {
-          if (textContainer.children.length > 2) return;
+          if (textContainer.children.length > 3) return;
 
           const d = document.createElement("div");
           d.className = "text";
-
-          // chọn câu ngẫu nhiên
-          d.textContent = messages[Math.floor(Math.random() * messages.length)];
-
-          d.style.left = Math.random() * 70 + "%";
+          d.innerHTML = "🎉 Chúc Mừng Năm Mới 2026 🎉<br>Lộc Ninh 11 ❤️❤️";
+          d.style.left = Math.random() * 60 + "%";
           d.style.fontFamily =
             Math.random() > 0.5 ? "Pacifico" : "Dancing Script";
 
           textContainer.appendChild(d);
           setTimeout(() => d.remove(), 8000);
-        }, 5000);
+        }, 4000);
       }
 
       /* ===== PHÁO HOA ===== */
@@ -259,10 +274,8 @@
           p.x += p.dx;
           p.y += p.dy;
           p.life--;
-
           ctx.fillStyle = `hsl(${Math.random() * 360},100%,60%)`;
           ctx.fillRect(p.x, p.y, 3, 3);
-
           if (p.life <= 0) particles.splice(i, 1);
         });
         requestAnimationFrame(animate);
