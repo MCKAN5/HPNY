@@ -40,7 +40,7 @@
         }
       }
 
-      /* ===== START / COUNTDOWN ===== */
+      /* ===== START ===== */
       #startScreen {
         position: absolute;
         inset: 0;
@@ -49,18 +49,22 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        color: yellow;
-        text-shadow: 0 0 20px red;
+        text-align: center;
+        padding: 20px;
       }
 
       #countdown {
-        font-size: 90px;
+        font-size: clamp(60px, 18vw, 120px);
         font-weight: bold;
+        color: yellow;
+        text-shadow:
+          0 0 20px red,
+          0 0 40px orange;
       }
 
       #tap {
-        margin-top: 20px;
-        font-size: 20px;
+        margin-top: 15px;
+        font-size: clamp(16px, 4vw, 22px);
         color: white;
       }
 
@@ -69,36 +73,39 @@
         position: absolute;
         inset: 0;
         display: none;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
         z-index: 2;
+        padding: 10px;
       }
 
       #album img {
-        max-width: 90%;
-        max-height: 70%;
+        width: auto;
+        height: auto;
+        max-width: 95%;
+        max-height: 65vh;
         border-radius: 15px;
-        box-shadow: 0 0 25px white;
+        box-shadow: 0 0 20px white;
         opacity: 0;
         transition: opacity 1s;
       }
 
       /* ===== CHỮ DƯỚI ẢNH ===== */
       #textUnder {
-        margin-top: 15px;
+        margin-top: 12px;
         text-align: center;
         color: white;
         display: none;
       }
 
       #textUnder .main {
-        font-size: 30px;
+        font-size: clamp(20px, 5vw, 32px);
         font-family: Pacifico;
       }
 
       #textUnder .sub {
-        font-size: 24px;
+        font-size: clamp(18px, 4.5vw, 26px);
         font-family: Dancing Script;
       }
 
@@ -118,7 +125,7 @@
     <!-- START -->
     <div id="startScreen">
       <div id="countdown">10</div>
-      <div id="tap">Chạm màn hình để bắt đầu</div>
+      <div id="tap">👉 Chạm màn hình để bắt đầu</div>
     </div>
 
     <!-- ALBUM -->
@@ -133,29 +140,41 @@
     <!-- FIREWORK -->
     <canvas id="fireworks"></canvas>
 
-    <!-- Nhạc -->
+    <!-- NHẠC -->
     <audio id="introMusic" src="music/tt.mp3"></audio>
-    <audio id="mainMusic" src="music/vsny.mp3" loop></audio>
+    <audio id="mainMusic" src="music/vsny1.mp3" loop></audio>
 
     <script>
       /* ===== ẢNH ===== */
       const images = [
+        "img/ln34.jpg",
+        "img/ln33.jpg",
+        "img/ln32.jpg",
+        "img/ln35.jpg",
+        "img/ln38.jpg",
+        "img/ln39.jpg",
         "img/ln12.jpg",
         "img/ln13.jpg",
         "img/ln27.png",
-        "img/ln14.jpg",
-        "img/ln16.jpg",
+        "img/ln28.png",
         "img/ln17.jpg",
         "img/ln18.jpg",
-        "img/ln15.jpg",
         "img/ln19.jpg",
-        "img/ln28.png",
+        "img/ln20.jpg",
+        "img/ln43.jpg",
+        "img/ln46.jpg",
+        "img/ln44.jpg",
+        "img/ln41.jpg",
+        "img/ln42.jpg",
+        "img/ln26.jpg",
+        "img/ln14.jpg",
+        "img/ln15.jpg",
+        "img/ln16.jpg",
         "img/ln21.jpg",
         "img/ln22.jpg",
         "img/ln23.jpg",
-        "img/ln30.jpg",
         "img/ln31.jpg",
-        "img/ln20.jpg",
+        "img/ln37.jpg",
       ];
 
       /* ===== ELEMENT ===== */
@@ -169,10 +188,15 @@
       const introMusic = document.getElementById("introMusic");
       const mainMusic = document.getElementById("mainMusic");
 
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
+      /* ===== RESIZE CANVAS ===== */
+      function resizeCanvas() {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
 
-      /* ===== CLICK BẮT ĐẦU ===== */
+      /* ===== CLICK ===== */
       document.body.addEventListener(
         "click",
         () => {
@@ -216,7 +240,7 @@
           albumImg.src = images[index];
           albumImg.style.opacity = 1;
           index++;
-        }, 500);
+        }, 300);
 
         setTimeout(showImage, 3000);
       }
@@ -228,7 +252,7 @@
           let x = Math.random() * canvas.width;
           let y = (Math.random() * canvas.height) / 2;
 
-          for (let i = 0; i < 60; i++) {
+          for (let i = 0; i < 50; i++) {
             particles.push({
               x,
               y,
@@ -238,7 +262,6 @@
             });
           }
         }, 500);
-
         animate();
       }
 
