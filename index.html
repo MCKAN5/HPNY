@@ -23,10 +23,10 @@
       #springBg {
         position: fixed;
         inset: 0;
-        z-index: 0;
         background: linear-gradient(120deg, #ff4e50, #ff9966, #ffcc33);
         background-size: 400% 400%;
-        animation: bgMove 10s ease infinite;
+        animation: bgMove 12s ease infinite;
+        z-index: 0;
       }
       @keyframes bgMove {
         0% {
@@ -40,82 +40,74 @@
         }
       }
 
-      /* ===== COUNTDOWN ===== */
-      #countdown {
+      /* ===== START / COUNTDOWN ===== */
+      #startScreen {
         position: absolute;
-        top: 35%;
-        width: 100%;
-        text-align: center;
-        font-size: 20vw;
-        font-weight: bold;
+        inset: 0;
         z-index: 10;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         color: yellow;
-        text-shadow:
-          0 0 20px red,
-          0 0 40px orange;
+        text-shadow: 0 0 20px red;
       }
 
-      /* ===== NHẤN ĐỂ XEM ===== */
-      #tapHint {
-        position: absolute;
-        top: 65%;
-        width: 100%;
-        text-align: center;
-        font-size: 6vw;
+      #countdown {
+        font-size: 90px;
+        font-weight: bold;
+      }
+
+      #tap {
+        margin-top: 20px;
+        font-size: 20px;
         color: white;
-        z-index: 10;
-        animation: blink 1s infinite;
-      }
-      @keyframes blink {
-        50% {
-          opacity: 0.3;
-        }
       }
 
-      /* ===== CANVAS ===== */
+      /* ===== ALBUM ===== */
+      #album {
+        position: absolute;
+        inset: 0;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 2;
+      }
+
+      #album img {
+        max-width: 90%;
+        max-height: 70%;
+        border-radius: 15px;
+        box-shadow: 0 0 25px white;
+        opacity: 0;
+        transition: opacity 1s;
+      }
+
+      /* ===== CHỮ DƯỚI ẢNH ===== */
+      #textUnder {
+        margin-top: 15px;
+        text-align: center;
+        color: white;
+        display: none;
+      }
+
+      #textUnder .main {
+        font-size: 30px;
+        font-family: Pacifico;
+      }
+
+      #textUnder .sub {
+        font-size: 24px;
+        font-family: Dancing Script;
+      }
+
+      /* ===== PHÁO HOA ===== */
       canvas {
         position: absolute;
         inset: 0;
-        z-index: 2;
         display: none;
-      }
-
-      /* ===== TEXT ===== */
-      #textContainer {
-        position: absolute;
-        inset: 0;
-        z-index: 3;
-        pointer-events: none;
-        display: none;
-      }
-      .text {
-        position: absolute;
-        bottom: -50px;
-        font-size: 7vw;
-        animation: fly 8s linear forwards;
-        white-space: nowrap;
-      }
-      @keyframes fly {
-        to {
-          transform: translateY(-120vh);
-          opacity: 0;
-        }
-      }
-
-      /* ===== PHOTO ===== */
-      .photo {
-        position: absolute;
-        bottom: -200px;
-        width: 22vw;
-        border-radius: 12px;
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
-        animation: photoFly linear infinite;
-        z-index: 3;
-      }
-      @keyframes photoFly {
-        to {
-          transform: translateY(-130vh);
-        }
+        z-index: 1;
       }
     </style>
   </head>
@@ -123,133 +115,114 @@
   <body>
     <div id="springBg"></div>
 
-    <div id="countdown">10</div>
-    <div id="tapHint">👉 Nhấn vào màn hình để xem</div>
+    <!-- START -->
+    <div id="startScreen">
+      <div id="countdown">10</div>
+      <div id="tap">Chạm màn hình để bắt đầu</div>
+    </div>
 
+    <!-- ALBUM -->
+    <div id="album">
+      <img id="albumImg" />
+      <div id="textUnder">
+        <div class="main">🎉 Chúc Mừng Năm Mới 2026 🎉</div>
+        <div class="sub">❤️ Lộc Ninh 11 ❤️</div>
+      </div>
+    </div>
+
+    <!-- FIREWORK -->
     <canvas id="fireworks"></canvas>
-    <div id="textContainer"></div>
 
-    <audio id="tickSound" src="music/tt.mp3" preload="auto"></audio>
-    <audio id="bgMusic" src="music/vsny.mp3" preload="auto" loop></audio>
+    <!-- Nhạc -->
+    <audio id="introMusic" src="music/tt.mp3"></audio>
+    <audio id="mainMusic" src="music/vsny.mp3" loop></audio>
 
     <script>
-      /* ===== DANH SÁCH ẢNH ===== */
+      /* ===== ẢNH ===== */
       const images = [
         "img/ln12.jpg",
         "img/ln13.jpg",
+        "img/ln27.png",
         "img/ln14.jpg",
-        "img/ln15.jpg",
-        "img/ln28.png",
+        "img/ln16.jpg",
         "img/ln17.jpg",
         "img/ln18.jpg",
+        "img/ln15.jpg",
         "img/ln19.jpg",
-        "img/ln20.jpg",
+        "img/ln28.png",
         "img/ln21.jpg",
-        "img/ln27.png",
+        "img/ln22.jpg",
+        "img/ln23.jpg",
         "img/ln30.jpg",
         "img/ln31.jpg",
+        "img/ln20.jpg",
       ];
 
       /* ===== ELEMENT ===== */
+      const startScreen = document.getElementById("startScreen");
       const countdownEl = document.getElementById("countdown");
-      const tapHint = document.getElementById("tapHint");
-      const textContainer = document.getElementById("textContainer");
-      const tickSound = document.getElementById("tickSound");
-      const music = document.getElementById("bgMusic");
+      const album = document.getElementById("album");
+      const albumImg = document.getElementById("albumImg");
+      const textUnder = document.getElementById("textUnder");
       const canvas = document.getElementById("fireworks");
       const ctx = canvas.getContext("2d");
+      const introMusic = document.getElementById("introMusic");
+      const mainMusic = document.getElementById("mainMusic");
 
       canvas.width = innerWidth;
       canvas.height = innerHeight;
 
-      let time = 10;
-
-      /* ===== MỞ KHÓA AUDIO ===== */
+      /* ===== CLICK BẮT ĐẦU ===== */
       document.body.addEventListener(
         "click",
         () => {
-          tickSound.play().then(() => {
-            tickSound.pause();
-            tickSound.currentTime = 0;
-          });
-          music.play().then(() => {
-            music.pause();
-            music.currentTime = 0;
-          });
+          introMusic.play().catch(() => {});
+          startCountdown();
         },
         { once: true },
       );
 
       /* ===== COUNTDOWN ===== */
-      startCountdown();
-
+      let time = 10;
       function startCountdown() {
-        countdownEl.textContent = time;
-
-        const timer = setInterval(() => {
-          tickSound.currentTime = 0;
-          tickSound.play();
-
+        const t = setInterval(() => {
           countdownEl.textContent = time;
           time--;
-
           if (time < 0) {
-            clearInterval(timer);
-            countdownEl.style.display = "none";
-            tapHint.style.display = "none";
-            music.play();
-            startShow();
+            clearInterval(t);
+            introMusic.pause();
+            startScreen.style.display = "none";
+            startAlbum();
           }
         }, 1000);
       }
 
-      /* ===== SHOW ===== */
-      function startShow() {
+      /* ===== ALBUM ===== */
+      let index = 0;
+      function startAlbum() {
+        album.style.display = "flex";
         canvas.style.display = "block";
-        textContainer.style.display = "block";
-        createPhotos();
-        createTexts();
+        textUnder.style.display = "block";
+        mainMusic.play().catch(() => {});
+        showImage();
         startFireworks();
       }
 
-      /* ===== ẢNH KHÔNG TRÙNG ===== */
-      function createPhotos() {
-        const columns = images.length;
-        const gap = 100 / columns;
+      function showImage() {
+        if (index >= images.length) index = 0;
 
-        images.forEach((src, i) => {
-          const img = document.createElement("img");
-          img.src = src;
-          img.className = "photo";
-          img.style.left = i * gap + gap / 4 + "%";
+        albumImg.style.opacity = 0;
+        setTimeout(() => {
+          albumImg.src = images[index];
+          albumImg.style.opacity = 1;
+          index++;
+        }, 500);
 
-          const duration = 8 + Math.random() * 5;
-          img.style.animationDuration = duration + "s";
-
-          document.body.appendChild(img);
-        });
-      }
-
-      /* ===== CHỮ ===== */
-      function createTexts() {
-        setInterval(() => {
-          if (textContainer.children.length > 3) return;
-
-          const d = document.createElement("div");
-          d.className = "text";
-          d.innerHTML = "🎉 Chúc Mừng Năm Mới 2026 🎉<br>Lộc Ninh 11 ❤️❤️";
-          d.style.left = Math.random() * 60 + "%";
-          d.style.fontFamily =
-            Math.random() > 0.5 ? "Pacifico" : "Dancing Script";
-
-          textContainer.appendChild(d);
-          setTimeout(() => d.remove(), 8000);
-        }, 4000);
+        setTimeout(showImage, 3000);
       }
 
       /* ===== PHÁO HOA ===== */
       let particles = [];
-
       function startFireworks() {
         setInterval(() => {
           let x = Math.random() * canvas.width;
@@ -265,6 +238,7 @@
             });
           }
         }, 500);
+
         animate();
       }
 
@@ -274,8 +248,10 @@
           p.x += p.dx;
           p.y += p.dy;
           p.life--;
+
           ctx.fillStyle = `hsl(${Math.random() * 360},100%,60%)`;
           ctx.fillRect(p.x, p.y, 3, 3);
+
           if (p.life <= 0) particles.splice(i, 1);
         });
         requestAnimationFrame(animate);
