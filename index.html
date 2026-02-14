@@ -49,22 +49,18 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        text-align: center;
-        padding: 20px;
+        color: yellow;
+        text-shadow: 0 0 20px red;
       }
 
       #countdown {
-        font-size: clamp(60px, 18vw, 120px);
+        font-size: 80px;
         font-weight: bold;
-        color: yellow;
-        text-shadow:
-          0 0 20px red,
-          0 0 40px orange;
       }
 
       #tap {
-        margin-top: 15px;
-        font-size: clamp(16px, 4vw, 22px);
+        margin-top: 20px;
+        font-size: 18px;
         color: white;
       }
 
@@ -73,39 +69,36 @@
         position: absolute;
         inset: 0;
         display: none;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
         z-index: 2;
         padding: 10px;
       }
 
       #album img {
-        width: auto;
-        height: auto;
         max-width: 95%;
-        max-height: 65vh;
+        max-height: 65%;
         border-radius: 15px;
-        box-shadow: 0 0 20px white;
+        box-shadow: 0 0 25px white;
         opacity: 0;
-        transition: opacity 1s;
+        transition: opacity 0.8s;
       }
 
-      /* ===== CHỮ DƯỚI ẢNH ===== */
+      /* ===== TEXT ===== */
       #textUnder {
-        margin-top: 12px;
+        margin-top: 15px;
         text-align: center;
         color: white;
-        display: none;
       }
 
       #textUnder .main {
-        font-size: clamp(20px, 5vw, 32px);
+        font-size: 24px;
         font-family: Pacifico;
       }
 
       #textUnder .sub {
-        font-size: clamp(18px, 4.5vw, 26px);
+        font-size: 20px;
         font-family: Dancing Script;
       }
 
@@ -140,12 +133,12 @@
     <!-- FIREWORK -->
     <canvas id="fireworks"></canvas>
 
-    <!-- NHẠC -->
+    <!-- MUSIC -->
     <audio id="introMusic" src="music/tt.mp3"></audio>
     <audio id="mainMusic" src="music/vsny1.mp3" loop></audio>
 
     <script>
-      /* ===== ẢNH ===== */
+      /* ===== DANH SÁCH ẢNH ===== */
       const images = [
         "img/ln34.jpg",
         "img/ln33.jpg",
@@ -177,41 +170,53 @@
         "img/ln37.jpg",
       ];
 
+      /* preload ảnh cho mượt */
+      images.forEach((src) => {
+        const i = new Image();
+        i.src = src;
+      });
+
       /* ===== ELEMENT ===== */
       const startScreen = document.getElementById("startScreen");
       const countdownEl = document.getElementById("countdown");
       const album = document.getElementById("album");
       const albumImg = document.getElementById("albumImg");
-      const textUnder = document.getElementById("textUnder");
       const canvas = document.getElementById("fireworks");
       const ctx = canvas.getContext("2d");
       const introMusic = document.getElementById("introMusic");
       const mainMusic = document.getElementById("mainMusic");
 
-      /* ===== RESIZE CANVAS ===== */
-      function resizeCanvas() {
-        canvas.width = innerWidth;
-        canvas.height = innerHeight;
-      }
-      resizeCanvas();
-      window.addEventListener("resize", resizeCanvas);
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
 
-      /* ===== CLICK ===== */
-      document.body.addEventListener(
-        "click",
-        () => {
-          introMusic.play().catch(() => {});
-          startCountdown();
-        },
-        { once: true },
-      );
+      /* ===== CLICK MỞ KHÓA AUDIO ===== */
+      let started = false;
+      document.body.addEventListener("click", async () => {
+        if (started) return;
+        started = true;
+
+        try {
+          await introMusic.play();
+          introMusic.pause();
+          introMusic.currentTime = 0;
+
+          await mainMusic.play();
+          mainMusic.pause();
+          mainMusic.currentTime = 0;
+        } catch (e) {}
+
+        startCountdown();
+      });
 
       /* ===== COUNTDOWN ===== */
       let time = 10;
       function startCountdown() {
         const t = setInterval(() => {
           countdownEl.textContent = time;
+          introMusic.currentTime = 0;
+          introMusic.play().catch(() => {});
           time--;
+
           if (time < 0) {
             clearInterval(t);
             introMusic.pause();
@@ -226,7 +231,6 @@
       function startAlbum() {
         album.style.display = "flex";
         canvas.style.display = "block";
-        textUnder.style.display = "block";
         mainMusic.play().catch(() => {});
         showImage();
         startFireworks();
@@ -236,11 +240,12 @@
         if (index >= images.length) index = 0;
 
         albumImg.style.opacity = 0;
+
         setTimeout(() => {
           albumImg.src = images[index];
           albumImg.style.opacity = 1;
           index++;
-        }, 300);
+        }, 400);
 
         setTimeout(showImage, 3000);
       }
@@ -261,7 +266,8 @@
               life: 100,
             });
           }
-        }, 500);
+        }, 600);
+
         animate();
       }
 
